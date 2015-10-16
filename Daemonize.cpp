@@ -2,18 +2,12 @@
 
 bool Daemonize::beDaemon()
 {
-<<<<<<< HEAD
     MessageLog* logger = MessageLog::getLogger();
-=======
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
     /*to be background process*/
     pid_t pid = fork();
     if(pid < 0)
     {
-<<<<<<< HEAD
         logger->errLog("Failed to fork().\n");
-=======
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
         return false;
     }
     if(pid >0)
@@ -24,10 +18,7 @@ bool Daemonize::beDaemon()
     /*create a new session */
     if(setsid() == -1)
     {
-<<<<<<< HEAD
         logger->errLog("Failed to setsid().\n");
-=======
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
         return false;
     }
 
@@ -36,10 +27,7 @@ bool Daemonize::beDaemon()
     pid = fork();
     if(pid < 0)
     {
-<<<<<<< HEAD
         logger->errLog("Failed to fork().");
-=======
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
         return false;
     }
     if(pid >0)
