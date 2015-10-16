@@ -3,8 +3,10 @@
 @[baixiangcpp]
 
 TinxHttpd is a simple HTTP server."Tin" means "Tiny", "inx"  means “Nginx", hahaha :), it is just a joke .
+
 I wrote a HTTP server at the begining of this year. Due to I did not commit it to my github.It was missing after my Windows reinstalled. This version is a improved one.But it also has some bugs and shortages. Also it will be constantly improving.
- A demo web using TinxHttpd : http://tinxhttpd.ilovecpp.com
+
+A demo web using TinxHttpd : http://tinxhttpd.ilovecpp.com
  
 -------------------
 
