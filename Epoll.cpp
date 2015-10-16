@@ -1,8 +1,4 @@
 #include "Epoll.h"
-<<<<<<< HEAD
-#include <iostream> ////////////////////////////////////////
-=======
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
 
 Epoll::Epoll(int fd,std::function<void(int)> worker)
     :m_sfd(fd),m_logger(MessageLog::getLogger()),m_worker(worker)
@@ -96,14 +92,6 @@ void Epoll::wait()
                 if(epoll_ctl(m_efd,EPOLL_CTL_DEL,pEvents[i].data.fd,&pEvents[i])==-1)
                 {
                     m_logger->warningLog("A client cannot be remove.\n");
-<<<<<<< HEAD
-                    std::cout << "Cannot be removed." << std::endl;///////
-                }
-                else 
-                {
-                    std::cout << "Removed." << std::endl;//////////////
-=======
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
                 }
                 close(pEvents[i].data.fd);
             }
