@@ -1,8 +1,5 @@
 #include "ThreadPool.h"
-<<<<<<< HEAD
-=======
-#include <unistd.h> //////////////////////////////
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
+
 ThreadPool::ThreadPool(std::function<void(int)> worker)
     :m_worker(worker),m_ready(false)
 {
