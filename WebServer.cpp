@@ -30,11 +30,6 @@ WebServer::WebServer()
 
 void WebServer::run()
 {
-<<<<<<< HEAD
     Epoll ep(m_sfd,Request::handler);
-=======
-    void (*fp)(int) = test;
-    Epoll ep(m_sfd,fp);
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
     ep.wait();
 }

@@ -9,11 +9,7 @@
 #include <netinet/in.h>
 #include "MessageLog.h"
 #include "Epoll.h"
-<<<<<<< HEAD
 #include "Request.h"
-=======
-#include "test.h" /////////////////////////////////
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
 
 class WebServer{
 public:
