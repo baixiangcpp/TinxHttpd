@@ -34,11 +34,8 @@ public:
     void sendNotFound();
     void sendFile(std::string);
     void execCGI(std::string);
-<<<<<<< HEAD
 
     static void handler(int);
-=======
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
 //    std::string GetFormData();
     
 };

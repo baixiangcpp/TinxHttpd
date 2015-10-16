@@ -1,5 +1,4 @@
 #include "Request.h"
-<<<<<<< HEAD
 
 /*************************************************
  *This function is used to get the request methods,
@@ -7,10 +6,6 @@
  *Return true on success,or false when the methods 
  *cannot  be deal with.
  ************************************************/
-=======
-#include <string.h>/////////////////////////////
-#include <iostream>
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
 
 Request::Request(int client)
     :m_client(client),m_iscgi(false)
@@ -39,21 +34,11 @@ Request::Request(int client)
     m_logger = MessageLog::getLogger();
 }
 
-<<<<<<< HEAD
 void Request::handler(int client)
 {
     Request r(client);
     r.work();
 }
-
-=======
-/*************************************************
- *This function is used to get the request methods,
- *only 'GET' and 'POST' can be deal with.
- *Return true on success,or false when the methods 
- *cannot  be deal with.
- ************************************************/
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
 
 void Request::getPath()
 {
@@ -74,11 +59,7 @@ void Request::getPath()
 void Request::work()
 {
     getPath();
-<<<<<<< HEAD
     std::string file("htdocs");
-=======
-    std::string file("/www/htdocs");//////////////////////////////
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
     file += m_path;
     
     if(file[file.length()-1] == '/')
