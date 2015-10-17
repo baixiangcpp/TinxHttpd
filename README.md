@@ -13,7 +13,7 @@ A demo web using TinxHttpd : http://tinxhttpd.ilovecpp.com
 
 ## Usage
 
-compile this code with user 'root' becuse TinxHttpd runs as a set-userid program.
+'compile this code with user 'root' becuse TinxHttpd runs as a set-userid program.'
 
 ``` bash
 make
