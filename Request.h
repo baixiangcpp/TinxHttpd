@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <stdio.h> 
+#include <errno.h>
 #include "MessageLog.h"
 
 class Request {
@@ -22,21 +23,21 @@ private:
 
     MessageLog* m_logger;
 private:
-    void discardHeaders();
-    char getline();
+    int getLengthAndDiscardHeaders();
+    int getline(char*,int);
+    
+    void sendNotFound();
+    void sendFile(std::string);
+    void execCGI(std::string);
+    void getPath();
+    void errRequest();
 public:
     Request(int);
     Request(const Request&) = delete;
     Request& operator=(const Request&) = delete;
-    
-    void getPath();
     void work();  
-    void sendNotFound();
-    void sendFile(std::string);
-    void execCGI(std::string);
 
     static void handler(int);
-//    std::string GetFormData();
     
 };
 

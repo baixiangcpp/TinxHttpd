@@ -1,5 +1,5 @@
 #include "Request.h"
-
+#include <iostream> ////////////////////////////////////////
 /*************************************************
  *This function is used to get the request methods,
  *only 'GET' and 'POST' can be deal with.
@@ -59,7 +59,7 @@ void Request::getPath()
 void Request::work()
 {
     getPath();
-    std::string file("htdocs");
+    std::string file("/www/htdocs");//////////////////////////////
     file += m_path;
     
     if(file[file.length()-1] == '/')
@@ -133,8 +133,7 @@ void Request::sendFile(std::string file)
 }
 
 void Request::execCGI(std::string file)
-{
-    
+{    
     if(m_method != std::string("POST"))
     {
         sendNotFound();
@@ -169,69 +168,139 @@ void Request::execCGI(std::string file)
     {
         close(infds[0]);
         close(outfds[1]);
+        
+        
         char in[8] = {0};
         char out[8] ={0};
         
-        sprintf(in,"%d",infds[1]);
-        sprintf(out,"%d",outfds[0]);
-
+        sprintf(out,"%d",infds[1]);
+        sprintf(in,"%d",outfds[0]);
+        
         char* argument[] = {(char*)strrchr(file.c_str(),'/'),in,out,0};
         execve(file.c_str(),argument,0);
     }
+   
     //parent go on
     close(infds[1]);
     close(outfds[0]);
-    discardHeaders();
+
+    int length = getLengthAndDiscardHeaders(); 
     
-    // Read post datas
+    //read post datas.
     char buf[1024] = {0};
-    
     int res = 0;
-    while(res = read(m_client,buf,sizeof(buf)))
+    int nums = 0;
+    std::string tmp;
+    while(((res = read(m_client,buf,sizeof(buf)-1)) != -1) || (nums != length))
     {
-        write(1,buf,res);
+        if(res == -1)
+        {
+            continue;
+        }
+        nums += res;
+        write(outfds[1],buf,res);
         bzero(buf,sizeof(buf));
     }
+    close(outfds[1]);
+
     
-    // recv result from cgi
+    //recv result from cgi
+    bzero(buf,sizeof(buf));
+    std::string result;
+    
     while(res = read(infds[0],buf,sizeof(buf)))
     {
-        write(m_client,buf,res);
+        result += buf;
         bzero(buf,sizeof(buf));
     }
-
     wait(0);
 
+    char re[] = {
+                 "HTTP/1.1 200 OK \r\n" \
+                 "Server: TinxHttpd v1.0 \r\n" \
+                 "Content-Type: text/html \r\n" \
+                 "\r\n" \
+                };
+    result = re + result;
+  
+    send(m_client,result.c_str(),result.length(),0);
     shutdown(m_client,O_RDWR);
     close(m_client);
 }
 
 
-//discard headers.
-void Request::discardHeaders()
+/**************************************************
+ * read content-length is necessary ,
+ * when large data in socket,they may in differnt 
+ * "frames" and the socket is non-blocking we may 
+ * lose some of them discard headers.
+ * ***********************************************/
+
+int Request::getLengthAndDiscardHeaders()
 {
-    char c;
-    while(getline() != '\r')
-        ;
+    bool flag = false;
+    int contentlength = 0;
+    char buf[1024] = {0};
+    while(getline(buf,sizeof(buf)) && strncmp(buf,"\r\n",2))
+    {
+        buf[15] = 0;
+        if(!strcasecmp(buf,"Content-Length:"))
+        {
+            contentlength = atoi(&buf[16]);
+            if(contentlength < 0)
+            {
+                errRequest();
+                return -1;
+            }
+            else
+            {
+                flag = true;
+            }
+        }
+        bzero(buf,sizeof(buf));
+    }
+
+    if(!flag)
+    {
+        errRequest();
+        return -1;
+    }
+    else
+        return contentlength;
 }
 
 
 //getline  
-char Request::getline()
+int Request::getline(char* buf, int size)
 {
-    char firstchar =0;
-	char c = 0;
-	int n;
-    int i=0;
-	while (c != '\n')
-	{
-		n = recv(m_client, &c, 1, 0);
-        if(n<0)
-            return -1;
-        if(i == 0)
-            firstchar = c;
-        ++i;
-	}
-    return firstchar;
+    int i = 0;
+    char c = 0;
+    int n;
+
+    while ((i < size - 1) && (c != '\n'))
+    {
+        n = recv(m_client, &c, 1, 0);
+        if (n > 0)
+        {
+            buf[i] = c;
+            i++;
+        }
+		else
+            break;
+    }
+    buf[i] = 0;
+    return i;
 }
 
+void Request::errRequest()
+{
+    char header[] = {
+                 "HTTP/1.1 400 BAD REQUEST \r\n" \
+                 "Server: TinxHttpd v1.0 \r\n" \
+                 "Content-Type: text/html \r\n" \
+                 "\r\n" \
+                 "Content-length is need in post.\n"
+                };
+    shutdown(m_client,O_RDWR);
+    close(m_client);
+}
