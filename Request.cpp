@@ -1,5 +1,5 @@
 #include "Request.h"
-#include <iostream> ////////////////////////////////////////
+
 /*************************************************
  *This function is used to get the request methods,
  *only 'GET' and 'POST' can be deal with.
@@ -59,7 +59,7 @@ void Request::getPath()
 void Request::work()
 {
     getPath();
-    std::string file("/www/htdocs");//////////////////////////////
+    std::string file("htdocs");
     file += m_path;
     
     if(file[file.length()-1] == '/')
