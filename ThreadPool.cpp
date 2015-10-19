@@ -28,18 +28,15 @@ void ThreadPool::startThreads()
 void* ThreadPool::thread_routine(void *arg)
 {
     ThreadPool* pt = (ThreadPool*)arg;
-    std::function<void*(void*)> worker;
     for(;;)
     {
         pthread_mutex_lock(&pt->m_mutex);
-
         /******************************************************
          * if there are tasks in std::list
          * get one immediately,instead of pthread_cond_wait().
          * OtherWise we may block here(wait for condition var),
          * when tasks are in std::list
          * ***************************************************/
-
         while(!pt->m_ready)
         {
             pthread_cond_wait(&pt->m_cond, &pt->m_mutex);
