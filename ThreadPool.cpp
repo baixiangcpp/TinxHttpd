@@ -25,18 +25,19 @@ void ThreadPool::startThreads()
     }
 }
 
+/*******************************************************
+ * why use m_ready:
+ * if there are tasks in std::list 
+ * get one immediately,instead of pthread_cond_wait().
+ * OtherWise we may block here(wait for condition var),
+ * when tasks are in std::list
+ *******************************************************/
 void* ThreadPool::thread_routine(void *arg)
 {
     ThreadPool* pt = (ThreadPool*)arg;
     for(;;)
     {
         pthread_mutex_lock(&pt->m_mutex);
-        /*******************************************************
-        * if there are tasks in std::list 
-        * get one immediately,instead of pthread_cond_wait().
-        * OtherWise we may block here(wait for condition var),
-        * when tasks are in std::list
-        *******************************************************/
         while(!pt->m_ready)
         {
             pthread_cond_wait(&pt->m_cond, &pt->m_mutex);
