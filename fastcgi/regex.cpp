@@ -1,62 +1,69 @@
 #include <regex>
 #include <iostream>
 #include <string>
-<<<<<<< HEAD
 #include <strings.h> //for bzero()
+#include <unistd.h>
+#include "json/json.h"
 
 int main(int argc,char** argv)
 {
-    int out = stoi(std::string(argv[1])); //C++11
-    int in = stoi(std::string(argv[2]));
+    //stoi() ,from C++11
+    int in = stoi(std::string(argv[1]));
+    int out = stoi(std::string(argv[2]));
 
     char buf[1024] = {0};
     int res =0;
-    //0.pattern
+    
+    std::string text;
+    
+    //read from parent process
     while(res = read(in,buf,sizeof(buf)))
     {
+        text += buf;
+        bzero(buf,sizeof(buf));
     }
-=======
 
-int main()
-{
-    //0.pattern
-    std::string pattern;
-    getline(std::cin,pattern);
->>>>>>> e972e68a5cddb4f8815309c824fa6977b59f5033
+    Json::Reader reader;
+    Json::Value value;
+
+    std::string selectpattern;
+    std::string regexpression;
+    std::string testmatched;
+    if (reader.parse(text, value))
+    {   
+        selectpattern = value["selectpattern"].asString();
+        regexpression = value["regexpression"].asString();
+        testmatched = value["testmatched"].asString();
+    }
     
-    //1.choose types
-    std::string type;
-    std::cin >> type;
     std::regex_constants::syntax_option_type rextype;
-    if(type == std::string("egrep"))
+    if(selectpattern == std::string("egrep"))
         rextype = std::regex_constants::egrep;
-    else if(type == std::string("basic"))
+    else if(selectpattern == std::string("basic"))
         rextype = std::regex_constants::basic;
-    else if(type == std::string("extended"))
+    else if(selectpattern == std::string("extended"))
         rextype = std::regex_constants::extended;
-    else if(type == std::string("awk"))
+    else if(selectpattern == std::string("awk"))
         rextype = std::regex_constants::awk;
-    else if(type == std::string("grep"))
+    else if(selectpattern == std::string("grep"))
         rextype = std::regex_constants::grep;
     else
         rextype = std::regex_constants::ECMAScript;
     
-    //2.text to be matched
-    std::string tmp,html;
+
+    regexpression = "[[:alpha:]]*" + regexpression + "[[:alpha:]]*";
     
-    while(getline(std::cin,tmp))
-    {
-        tmp += '\n';
-        html += tmp;
-    }
-    //3.match and output
-    pattern = "[[:alpha:]]*" + pattern + "[[:alpha:]]*";
-    std::regex r(pattern);
-    for (std::sregex_iterator it(html.begin(), html.end(), r), end;
+    std::regex r(regexpression);
+    for (std::sregex_iterator it(testmatched.begin(), testmatched.end(), r), end;
         it != end;
         ++it)
     {
-        std::cout << it->str() << std::endl;
+        // it->str().length() cannot work well,always return 0.
+        // maybe it's a bug in REGEX library
+        std::string str = it->str();
+        str += '\n';
+        write(out,str.c_str(),str.length());
     }
+    close(out);
 }
 
