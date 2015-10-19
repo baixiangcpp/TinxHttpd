@@ -1,7 +1,7 @@
 CC = g++
 C11 = -std=c++11
 THREAD = -lpthread
-OBJECT = WebServer.o Epoll.o ThreadPool.o Request.o Daemonize.o MessageLog.o
+OBJECT = WebServer.o Epoll.o ThreadPool.o Request.o  MessageLog.o Daemonize.o
 TinxHttpd:$(OBJECT)
 	$(CC) -o TinxHttpd  main.cpp $(OBJECT) $(C11) $(THREAD)
 WebServer.o:Epoll.o MessageLog.o Request.o WebServer.h WebServer.cpp
@@ -20,4 +20,4 @@ install:
 	install ./TinxHttpd /usr/bin
 	chmod +s /usr/bin/TinxHttpd
 clean:
-	rm $(OBJECT) 
+	rm $(OBJECT) -f 
