@@ -101,7 +101,6 @@ void Request::sendNotFound()
     
     shutdown(m_client,O_RDWR);
     close(fd);
-    close(m_client);
 }
 
 void Request::sendFile(std::string file)
